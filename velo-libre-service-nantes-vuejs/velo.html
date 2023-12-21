@@ -84,6 +84,7 @@
 						bikeData: [],
                         filtredBikeData: [],
                         recherche: "",
+                        timer: null,
 					};
 				},
 
@@ -92,12 +93,19 @@
 				},
 				methods: {
                     filterStations() {
-                        if(this.recherche === ""){
-                            this.filtredBikeData = this.bikeData
+                        if (this.timer) {
+                            clearTimeout(this.timer);
                         }
-                        this.filtredBikeData = this.bikeData.filter(station =>
-                            station.name.toLowerCase().includes(this.recherche.toLowerCase())
-                        );
+                        //debouncing
+                        this.timer = setTimeout(() => {
+
+                            if(this.recherche === ""){
+                                this.filtredBikeData = this.bikeData
+                            }
+                            this.filtredBikeData = this.bikeData.filter(station =>
+                                station.name.toLowerCase().includes(this.recherche.toLowerCase())
+                            );
+                        }, 500);
                     },
 					fetchDataPromise: async function () {
 						try {
