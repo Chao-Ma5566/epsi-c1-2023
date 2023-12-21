@@ -27,12 +27,19 @@
             tr:nth-child(even) {
                 background-color: #dddddd;
             }
+            .map{
+                display: flex;
+                justify-content: center;
+            }
 		</style>
 	</head>
 	<body>
 		<div id="demo">
 			<!-- <pre>{{bikeData}}</pre> -->
 			<h1>Stations de vélo en libre-service à Nantes</h1>
+            <div class="map">
+              <iframe src="https://data.nantesmetropole.fr/explore/embed/dataset/244400404_stations-velos-libre-service-nantes-metropole-disponibilites/custom/?dataChart=eyJxdWVyaWVzIjpbeyJjaGFydHMiOlt7InR5cGUiOiJsaW5lIiwiZnVuYyI6IlNVTSIsInlBeGlzIjoiYXZhaWxhYmxlX2Jpa2VzIiwic2NpZW50aWZpY0Rpc3BsYXkiOnRydWUsImNvbG9yIjoiI0YxOEMwMCJ9XSwieEF4aXMiOiJsYXN0X3VwZGF0ZSIsIm1heHBvaW50cyI6IiIsInRpbWVzY2FsZSI6InllYXIiLCJzb3J0IjoiIiwiY29uZmlnIjp7ImRhdGFzZXQiOiIyNDQ0MDA0MDRfc3RhdGlvbnMtdmVsb3MtbGlicmUtc2VydmljZS1uYW50ZXMtbWV0cm9wb2xlLWRpc3BvbmliaWxpdGVzIiwib3B0aW9ucyI6e319fV0sImRpc3BsYXlMZWdlbmQiOnRydWUsImFsaWduTW9udGgiOnRydWV9&static=false&datasetcard=false" width="400" height="300" frameborder="0"></iframe>
+            </div>
 			<!-- <template v-for="branch in branches">
 				<input
 					type="radio"
@@ -66,18 +73,23 @@
                   <td>{{station.available_bikes}}</td>
                 </tr>
               </table>
-		</div>
+        </div>
 		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 		<script src="https://unpkg.com/vue@3"></script>
 		<script>
 			const apiURL =
 				"https://data.nantesmetropole.fr/api/explore/v2.1/catalog/datasets/244400404_stations-velos-libre-service-nantes-metropole-disponibilites/records?limit=100";
-			const config = {};
+			const config = {
+                headers: {
+                    Authorization: 'Apikey 4d8594eed9aae133efafdaedc55c9b18aa06ec392144ae57fd5d170b'
+                }
+            };
 
 			Vue.createApp({
 				data() {
 					return {
 						bikeData: [],
+                        filtredBikeData: [],
 					};
 				},
 
@@ -86,12 +98,12 @@
 				},
 
 				watch: {
-					bikeData: "fetchDataPromise",
+					filtredBikeData: "fetchDataPromise",
 				},
 				methods: {
 					fetchDataPromise: async function () {
 						try {
-							const response = await axios.get(apiURL);
+							const response = await axios.get(apiURL, config);
 							this.bikeData = response.data.results;
 						} catch (error) {
 							console.error("Une erreur s'est produite lors de la récupération des données :", error);
