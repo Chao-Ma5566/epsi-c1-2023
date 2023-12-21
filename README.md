@@ -8,4 +8,3 @@ Il contient:
 
 - une liste de stations de vélo.
 - Un bar de recherche
-- Certain filtres pour type de payment, place libre etc.
