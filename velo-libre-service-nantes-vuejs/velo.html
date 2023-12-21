@@ -20,13 +20,28 @@
 			.date {
 				font-weight: bold;
 			}
+            table {
+                font-family: arial, sans-serif;
+                border-collapse: collapse;
+                width: 100%;
+                }
+
+            td, th {
+                border: 1px solid #dddddd;
+                text-align: left;
+                padding: 8px;
+            }
+
+            tr:nth-child(even) {
+                background-color: #dddddd;
+            }
 		</style>
 	</head>
 	<body>
 		<div id="demo">
-			<pre>{{bikeData}}</pre>
-			<h1>Latest Vue.js Commits</h1>
-			<template v-for="branch in branches">
+			<!-- <pre>{{bikeData}}</pre> -->
+			<h1>Stations de vélo en libre service à Nantes</h1>
+			<!-- <template v-for="branch in branches">
 				<input
 					type="radio"
 					:id="branch"
@@ -40,28 +55,23 @@
 			<input type="text" v-model="brancheName"/>
 			<button @click="addbranche">Ajoutez une branche</button>
 			<br />Valeur de currenBranch : {{currentBranch}}
-			<p>vuejs/vue@{{ currentBranch }}</p>
-			<ul>
-				<li v-for="record in bikeData">
-					<a :href="record.html_url" target="_blank" class="commit"
-						>{{ record.sha.slice(0, 7) }}</a
-					>
-					-
-					<span class="message"
-						>{{ formattedMessage(record.commit.message) }}</span
-					><br />
-					by
-					<span class="author"
-						><a :href="record.author.html_url" target="_blank"
-							>{{ record.commit.author.name }}</a
-						><img :src="record.author.avatar_url" alt="autor image" style="width: 5em; height: 5em;"></span
-					>
-					at
-					<span class="date"
-						>{{ formattedDate(record.commit.author.date) }}</span
-					>
-				</li>
-			</ul>
+			<p>vuejs/vue@{{ currentBranch }}</p> -->
+            <table>
+                <tr>
+                  <th>Nom</th>
+                  <th>Adresse</th>
+                  <th>Payment bancaire</th>
+                  <th>Ouvert</th>
+                  <th>Vélo libre</th>
+                </tr>
+                <tr v-for="station in bikeData">
+                  <td>{{station.name}}</td>
+                  <td>{{station.address}}</td>
+                  <td>{{station.banking}}</td>
+                  <td>{{station.status}}</td>
+                  <td>{{station.available_bikes}}</td>
+                </tr>
+              </table>
 		</div>
 		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 		<script src="https://unpkg.com/vue@3"></script>
@@ -85,31 +95,30 @@
 				},
 
 				watch: {
-					currentBranch: "fetchDataPromise",
+					bikeData: "fetchDataPromise",
 				},
 				methods: {
 					fetchDataPromise: async function () {
 						try {
-							const response = await axios.get(apiURL + this.currentBranch);
-							this.bikeData = response.data;
-                            console.log(bikeData)
+							const response = await axios.get(apiURL);
+							this.bikeData = response.data.results;
 						} catch (error) {
 							console.error("Une erreur s'est produite lors de la récupération des données :", error);
 							this.bikeData = [];
 						}
 					},
-					addbranche: function() {
-						this.branches.push(this.brancheName)
-						this.brancheName = ""
-					},
-					formattedMessage: function (message) {
-						const newline = message.indexOf("\n");
-						console.log(newline);
-						return newline > 0 ? message.slice(0, newline) : message;
-					},
-					formattedDate: function (date) {
-						return date.replace(/T|Z/g, " ");
-					},
+					// addbranche: function() {
+					// 	this.branches.push(this.brancheName)
+					// 	this.brancheName = ""
+					// },
+					// formattedMessage: function (message) {
+					// 	const newline = message.indexOf("\n");
+					// 	console.log(newline);
+					// 	return newline > 0 ? message.slice(0, newline) : message;
+					// },
+					// formattedDate: function (date) {
+					// 	return date.replace(/T|Z/g, " ");
+					// },
 				},
 			}).mount("#demo");
 		</script>
