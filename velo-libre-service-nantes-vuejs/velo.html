@@ -30,6 +30,13 @@
             .map{
                 display: flex;
                 justify-content: center;
+                margin-bottom: 5em;
+                margin-top: 5em;
+            }
+            .seach{
+                margin: auto;
+                display: block;
+                margin-bottom: 5em;
             }
 		</style>
 	</head>
@@ -40,21 +47,7 @@
             <div class="map">
               <iframe src="https://data.nantesmetropole.fr/explore/embed/dataset/244400404_stations-velos-libre-service-nantes-metropole-disponibilites/custom/?dataChart=eyJxdWVyaWVzIjpbeyJjaGFydHMiOlt7InR5cGUiOiJsaW5lIiwiZnVuYyI6IlNVTSIsInlBeGlzIjoiYXZhaWxhYmxlX2Jpa2VzIiwic2NpZW50aWZpY0Rpc3BsYXkiOnRydWUsImNvbG9yIjoiI0YxOEMwMCJ9XSwieEF4aXMiOiJsYXN0X3VwZGF0ZSIsIm1heHBvaW50cyI6IiIsInRpbWVzY2FsZSI6InllYXIiLCJzb3J0IjoiIiwiY29uZmlnIjp7ImRhdGFzZXQiOiIyNDQ0MDA0MDRfc3RhdGlvbnMtdmVsb3MtbGlicmUtc2VydmljZS1uYW50ZXMtbWV0cm9wb2xlLWRpc3BvbmliaWxpdGVzIiwib3B0aW9ucyI6e319fV0sImRpc3BsYXlMZWdlbmQiOnRydWUsImFsaWduTW9udGgiOnRydWV9&static=false&datasetcard=false" width="400" height="300" frameborder="0"></iframe>
             </div>
-			<!-- <template v-for="branch in branches">
-				<input
-					type="radio"
-					:id="branch"
-					:value="branch"
-					name="branch"
-					v-model="currentBranch"
-				/>
-
-				<label :for="branch">{{ branch }}</label>
-			</template>
-			<input type="text" v-model="brancheName"/>
-			<button @click="addbranche">Ajoutez une branche</button>
-			<br />Valeur de currenBranch : {{currentBranch}}
-			<p>vuejs/vue@{{ currentBranch }}</p> -->
+            <input class="seach" v-model="recherche" @input="filterStations" placeholder="Faire une recherche"/>
             <table>
                 <tr>
                   <th>Nom</th>
@@ -63,7 +56,7 @@
                   <th>Ouvert</th>
                   <th>Vélo dispo</th>
                 </tr>
-                <tr v-for="station in bikeData">
+                <tr v-for="station in filtredBikeData">
                   <td>{{station.name}}</td>
                   <td>{{station.address}}</td>
                   <td v-if="station.banking === 'False'">Non Acceptée</td>
@@ -90,38 +83,32 @@
 					return {
 						bikeData: [],
                         filtredBikeData: [],
+                        recherche: "",
 					};
 				},
 
 				created: function () {
 					this.fetchDataPromise();
 				},
-
-				watch: {
-					filtredBikeData: "fetchDataPromise",
-				},
 				methods: {
+                    filterStations() {
+                        if(this.recherche === ""){
+                            this.filtredBikeData = this.bikeData
+                        }
+                        this.filtredBikeData = this.bikeData.filter(station =>
+                            station.name.toLowerCase().includes(this.recherche.toLowerCase())
+                        );
+                    },
 					fetchDataPromise: async function () {
 						try {
 							const response = await axios.get(apiURL, config);
 							this.bikeData = response.data.results;
+                            this.filtredBikeData = this.bikeData
 						} catch (error) {
 							console.error("Une erreur s'est produite lors de la récupération des données :", error);
 							this.bikeData = [];
 						}
 					},
-					// addbranche: function() {
-					// 	this.branches.push(this.brancheName)
-					// 	this.brancheName = ""
-					// },
-					// formattedMessage: function (message) {
-					// 	const newline = message.indexOf("\n");
-					// 	console.log(newline);
-					// 	return newline > 0 ? message.slice(0, newline) : message;
-					// },
-					// formattedDate: function (date) {
-					// 	return date.replace(/T|Z/g, " ");
-					// },
 				},
 			}).mount("#demo");
 		</script>
