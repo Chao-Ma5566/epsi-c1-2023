@@ -3,23 +3,15 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width,initial-scale=1" />
-		<title>Station de vélo en libre service à Nantes</title>
+		<title>Stations de vélo en libre-service à Nantes</title>
 		<style>
 			#demo {
 				font-family: "Helvetica", Arial, sans-serif;
 			}
-			a {
-				text-decoration: none;
-				color: #f66;
-			}
-			li {
-				line-height: 1.5em;
-				margin-bottom: 20px;
-			}
-			.author,
-			.date {
-				font-weight: bold;
-			}
+            h1{
+                text-align: center;
+                margin: 2em;
+            }
             table {
                 font-family: arial, sans-serif;
                 border-collapse: collapse;
@@ -40,7 +32,7 @@
 	<body>
 		<div id="demo">
 			<!-- <pre>{{bikeData}}</pre> -->
-			<h1>Stations de vélo en libre service à Nantes</h1>
+			<h1>Stations de vélo en libre-service à Nantes</h1>
 			<!-- <template v-for="branch in branches">
 				<input
 					type="radio"
@@ -62,13 +54,15 @@
                   <th>Adresse</th>
                   <th>Payment bancaire</th>
                   <th>Ouvert</th>
-                  <th>Vélo libre</th>
+                  <th>Vélo dispo</th>
                 </tr>
                 <tr v-for="station in bikeData">
                   <td>{{station.name}}</td>
                   <td>{{station.address}}</td>
-                  <td>{{station.banking}}</td>
-                  <td>{{station.status}}</td>
+                  <td v-if="station.banking === 'False'">Non Acceptée</td>
+                  <td v-else>Acceptée</td>
+                  <td v-if="station.status === 'OPEN'">Ouverte</td>
+                  <td v-else>Fermé</td>
                   <td>{{station.available_bikes}}</td>
                 </tr>
               </table>
@@ -83,9 +77,6 @@
 			Vue.createApp({
 				data() {
 					return {
-						brancheName: "",
-						branches: ["main", "3.2", "v2-compat"],
-						currentBranch: "main",
 						bikeData: [],
 					};
 				},
